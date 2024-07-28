@@ -38,12 +38,12 @@ jobs:
         run: docker pull zaproxy/zap-stable
       - name: Run ZAP Scan
         run: |
-          docker run -v $(pwd):/zap/wrk/:rw -t zaproxy/zap-stable zap-baseline.py -t http://afab3d94224594309a7df96076bea4f9-1897058190.us-east-1.elb.amazonaws.com/index.html?fbclid=IwY2xjawETW6hleHRuA2FlbQIxMAABHTpuqipY0u6eJxe5zPCGCXmGW89PTF07H2LVv9SeVZp0KOTFfYfa13IRlg_aem_AdUsqKXOcb8HAlE0IccZ-A -r zap_report.html
+          docker run -v $(pwd):/zap/wrk/:rw -t zaproxy/zap-stable zap-baseline.py -t http://afab3d94224594309a7df96076bea4f9-1897058190.us-east-1.elb.amazonaws.com/index.html?fbclid=IwY2xjawETW6hleHRuA2FlbQIxMAABHTpuqipY0u6eJxe5zPCGCXmGW89PTF07H2LVv9SeVZp0KOTFfYfa13IRlg_aem_AdUsqKXOcb8HAlE0IccZ-A -r /zap/wrk/Application/zap_report.html
       - name: Upload ZAP Report
         uses: actions/upload-artifact@v2
         with:
           name: zap-report
-          path: zap_report.html
+          path: Application/zap_report.html
 
   build-image:
     runs-on: ubuntu-latest
