@@ -15,6 +15,6 @@ spec:
     spec:
       containers:
         - name: app-server
-          image: dixluwn/swe40006-tn-coffee:f4f0823c38ef1c84e30e8f6c070adfb15f9bb41d
+          image: dixluwn/swe40006-tn-coffee:323ed7d6d98726171104592bf22ebc9ae4906569
           ports:
             - containerPort: 80
