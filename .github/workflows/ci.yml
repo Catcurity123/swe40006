@@ -30,17 +30,20 @@ jobs:
 
   dast:
     runs-on: ubuntu-latest
-    name: ZAP API Scan
+    name: ZAP Scan
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Log current directory
-        run: echo ${pwd}
       - name: Pull ZAP OWASP Image
-        run: docker pull owasp/zap2docker-weekly
-      - name: Run ZAP API Scan
+        run: docker pull owasp/zap2docker-stable
+      - name: Run ZAP Scan
         run: |
-          sudo docker run -v $(pwd):/zap/wrk/:rw -t owasp/zap2docker-weekly zap-api-scan.py -t openapi.json -f openapi -c api-scan.conf
+          docker run -v $(pwd):/zap/wrk/:rw -t owasp/zap2docker-stable zap-baseline.py -t http://afab3d94224594309a7df96076bea4f9-1897058190.us-east-1.elb.amazonaws.com/index.html?fbclid=IwY2xjawETW6hleHRuA2FlbQIxMAABHTpuqipY0u6eJxe5zPCGCXmGW89PTF07H2LVv9SeVZp0KOTFfYfa13IRlg_aem_AdUsqKXOcb8HAlE0IccZ-A -r zap_report.html
+      - name: Upload ZAP Report
+        uses: actions/upload-artifact@v2
+        with:
+          name: zap-report
+          path: zap_report.html
 
   build-image:
     runs-on: ubuntu-latest
