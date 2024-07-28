@@ -7,11 +7,35 @@ on:
   workflow_dispatch: {}
 
 jobs:
+
+
+
+    
   test-image:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        
+
+      - name: Setup SonarQube
+        uses: warchant/setup-sonar-scanner@v8
+
+      - name: Analyze with SonarCloud
+        uses: sonarsource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets._GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          projectBaseDir: ./Application/TrungNguyenCoffee
+          args: >
+            -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
+            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
+            -Dsonar.host.url=${{ secrets.SONAR_URL }}
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+            -Dsonar.sources=.
+            -Dsonar.verbose=true
+
+
+
       - name: Build and push test Docker image
         working-directory: ./Application/TrungNguyenCoffee
         run: |
@@ -24,7 +48,7 @@ jobs:
     needs: test-image
 
     steps:
-      - name: Check out code
+      - name: Check out code0
         uses: actions/checkout@v2
 
       - name: Update Image Tag Values
@@ -33,15 +57,15 @@ jobs:
           new_image_tag=${{ github.sha }}
 
           # Update the deployment.yaml file with the new image tag
-          sed -i "s|image: dixluwn/swe40006-tn-coffee:.*|image: dixluwn/swe40006-tn-coffee:$new_image_tag|" "$deployment_file"
+          sed -i "s|image: dixluwn/swe40006-tn-coffee:.*|image: ${{ secrets.DOCKER_USERNAME }}/swe40006-tn-coffee:$new_image_tag|" "$deployment_file"
 
       - name: Update Image Tag Values
         run: |
-            deployment_file="./k8s_local/deployment.yaml"  # Update with the actual path to your deployment.yaml
-            new_image_tag=${{ github.sha }}
+          deployment_file="./k8s_local/deployment.yaml"  # Update with the actual path to your deployment.yaml
+          new_image_tag=${{ github.sha }}
   
-            # Update the deployment.yaml file with the new image tag
-            sed -i "s|image: dixluwn/swe40006-tn-coffee:.*|image: dixluwn/swe40006-tn-coffee:$new_image_tag|" "$deployment_file"
+          # Update the deployment.yaml file with the new image tag
+          sed -i "s|image: dixluwn/swe40006-tn-coffee:.*|image: ${{ secrets.DOCKER_USERNAME }}/swe40006-tn-coffee:$new_image_tag|" "$deployment_file"
 
       - name: Commit the changes made
         run: | 
